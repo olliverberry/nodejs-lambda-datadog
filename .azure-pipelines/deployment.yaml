@@ -51,3 +51,7 @@ steps:
 - script: |
     datadog-ci lambda instrument -f NodeJsLambdaDatadog -r $(awsRegion) -v 104 -e 53
   displayName: 'instrument lambda function with datadog cli tool'
+  env:
+    AWS_ACCESS_KEY_ID: $(aws-access-key-id)
+    AWS_SECRET_ACCESS_KEY: $(aws-secret-access-key)
+    DATADOG_API_KEY: $(datadog-api-key)
