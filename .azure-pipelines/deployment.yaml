@@ -1,0 +1,53 @@
+trigger:
+- main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+- name: awsRegion
+  value: us-east-1
+- name: s3BucketName
+  value: smehrens-useast1-lambda-function-code
+
+steps:
+- task: UseNode@1
+  inputs:
+    version: '18.x'
+  displayName: 'Install Node.js'
+
+- script: |
+    npm install
+  displayName: 'npm install'
+
+- script: |
+    npm run build
+  displayName: 'npm build'
+
+- task: S3Upload@1
+  inputs:
+    awsCredentials: aws-connection
+    regionName: '$(awsRegion)'
+    bucketName: '$(s3BucketName)'
+    sourceFolder: '$(Build.SourcesDirectory)'
+    globExpressions: '**/dist/*.zip' 
+    flattenFolders: true
+    targetFolder: nodejs-lambda-datadog
+
+- task: CloudformationCreateOrUpdateStack@1
+  displayName: 'Create/Update Stack'
+  inputs:
+    awsCredentials: aws-connection
+    regionName: '$(awsRegion)'
+    stackName: nodejs-lambda-stack
+    templateFile: '$(Build.SourcesDirectory)/.cloudformation/template.yaml'
+    templateParametersFile: '$(Build.SourcesDirectory)/.cloudformation/parameters.json'
+    useChangeSet: false
+
+- script: |
+    npm install -g @datadog/datadog-ci
+  displayName: 'install the datadog cli tool'
+
+- script: |
+    datadog-ci lambda instrument -f NodeJsLambdaDatadog -r $(awsRegion) -v 104 -e 53
+  displayName: 'instrument lambda function with datadog cli tool'

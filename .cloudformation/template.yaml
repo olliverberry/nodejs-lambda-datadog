@@ -1,0 +1,27 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Parameters:
+  LambdaRoleArn:
+    Type: String
+    Description: ARN of the IAM role for the Lambda function
+  LambdaFunctionName:
+    Type: String
+    Description: Name of the Lambda function
+  S3BucketName:
+    Type: String
+    Description: Name of the S3 bucket containing Lambda deployment package
+  S3Key:
+    Type: String
+    Description: Path to Lambda deployment package within the S3 bucket
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !Ref LambdaRoleArn
+      FunctionName: !Ref LambdaFunctionName
+      Runtime: nodejs14.x
+      Code:
+        S3Bucket: !Ref S3BucketName
+        S3Key: !Ref S3Key
+      Timeout: 60
+      

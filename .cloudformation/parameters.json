@@ -1,0 +1,19 @@
+[
+    {
+      "ParameterKey": "LambdaRoleArn",
+      "ParameterValue": "arn:aws:iam::280540947342:role/aws-lambda-role"
+    },
+    {
+      "ParameterKey": "LambdaFunctionName",
+      "ParameterValue": "NodeJsLambdaDatadog"
+    },
+    {
+      "ParameterKey": "S3BucketName",
+      "ParameterValue": "smehrens-useast1-lambda-function-code"
+    },
+    {
+      "ParameterKey": "S3Key",
+      "ParameterValue": "nodejs-lambda-datadog/index.zip"
+    }
+  ]
+  
